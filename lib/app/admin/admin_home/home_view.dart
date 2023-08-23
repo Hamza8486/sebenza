@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sebenza/app/admin/admin_home/component/home_component.dart';
 import 'package:sebenza/app/admin/admin_home/controller/home_controller.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/view/admin_invoice_view.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_orders/view/orders_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/annoucement/view/announce_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/promo_codes/view/promo_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/roles/view/roles_view.dart';
@@ -317,7 +319,54 @@ class _HomeViewState extends State<HomeView> {
                               SizedBox(
                                 width: Get.width * 0.09,
                               ),
-                             Expanded(child: Container())
+
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        print("object");
+                                        homeController.clear();
+                                        homeController.getInvoiceData();
+                                        Get.to(AdminInvoiceViews());
+
+                                      },
+                                      child: WidgetDashboard(
+                                          text: "Invoices",
+                                          icon: Icon(Icons.credit_card,color: AppColor.btnColor,
+                                            size: Get.height*0.034,
+                                          ),
+                                          image: ImageAsset.calendar))),
+                            ],
+                          ),
+                          SizedBox(
+                            height: Get.height * 0.035,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        homeController.clear();
+                                        homeController.getOrderData();
+                                        Get.to(AdminOrders());
+                                      },
+                                      child: WidgetDashboard(
+                                          text: "Orders",
+                                          icon: Icon(Icons.storefront,color: AppColor.btnColor,
+                                            size: Get.height*0.034,
+                                          ),
+                                          image: ImageAsset.profile))),
+                              SizedBox(
+                                width: Get.width * 0.09,
+                              ),
+
+                              Expanded(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        print("object");
+
+
+                                      },
+                                      child:Container())),
                             ],
                           ),
                           SizedBox(

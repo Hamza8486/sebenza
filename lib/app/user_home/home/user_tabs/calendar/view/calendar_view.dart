@@ -247,6 +247,64 @@ class CalendarView extends StatelessWidget {
                                                     ),
                                                   ),
                                                 ),
+                                                SizedBox(width: Get.width*0.04,),
+
+                                                GestureDetector(
+                                                  onTap: ()async{
+                                                    DateTime? pickedDate = await showDatePicker(
+                                                        context: context,
+                                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+
+                                                        builder: (BuildContext? context,
+                                                            Widget? child) {
+                                                          return Center(
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(20)),
+                                                                width: 350.0,
+                                                                height: 500.0,
+                                                                child: Theme(
+                                                                  data: ThemeData.light().copyWith(
+                                                                    primaryColor:
+                                                                    AppColor.blackColor,
+
+                                                                    colorScheme: ColorScheme.light(
+                                                                      primary:
+                                                                      AppColor.blackColor,),
+                                                                    buttonTheme: ButtonThemeData(
+                                                                        buttonColor:
+                                                                        AppColor.primaryColor),
+                                                                  ),
+                                                                  child: child!,
+                                                                ),
+                                                              ));
+                                                        },
+                                                        initialDate: DateTime.now(),
+                                                        firstDate: DateTime.now(),
+                                                        lastDate: DateTime(2050));
+
+                                                    if (pickedDate != null) {
+
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    decoration:BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      border: Border.all(color: AppColor.btnColor)
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 14,vertical: 5.5),
+                                                      child: AppText(
+                                                        title: "Visit Calender",
+                                                        size: AppSizes.size_14,
+                                                        fontWeight: FontWeight.w400,
+                                                        fontFamily: AppFont.regular,
+                                                        color: AppColor.btnColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             )
 

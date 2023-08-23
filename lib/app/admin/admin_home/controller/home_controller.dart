@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/admin_invoice_model.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/invoice_detail.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_orders/model/order_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/tickets/model/all_tickets_model.dart';
-import 'package:sebenza/app/admin/admin_home/home_tabs/user/model/get_user_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/user/model/roles_model.dart';
 import 'package:sebenza/app/services/api_manager.dart';
 import 'package:sebenza/app/widgets/helper_function.dart';
@@ -229,6 +231,7 @@ class HomeController extends GetxController {
   }
 
   clear(){
+    users.clear();
     pixController.clear();
     namePromo.clear();
     discountPromo.clear();
@@ -325,6 +328,8 @@ class HomeController extends GetxController {
       getAccountData(search: "");
       getWhatsaData(search: "");
       getUpdatesData();
+      getOrderData();
+      getInvoiceData();
      // getTicketsData();
       getBasicData();
       print(token.value.toString());
@@ -627,5 +632,94 @@ class HomeController extends GetxController {
     }
     update();
   }
+  TextEditingController users = TextEditingController();
 
+  var isOrdersLoading = false.obs;
+  OrderMyData ?  userOrderList ;
+
+  getOrderData() async {
+    try {
+      isOrdersLoading(true);
+      update();
+
+      var profData = await ApiManger.getAdminOrders();
+      if (profData != null) {
+        userOrderList = profData.data ;
+
+        print(
+            "This is ORDER ${profData.data}");
+      } else {
+        isOrdersLoading(false);
+        update();
+      }
+    } catch (e) {
+      isOrdersLoading(false);
+      update();
+      debugPrint(e.toString());
+    } finally {
+      isOrdersLoading(false);
+      update();
+    }
+    update();
+  }
+
+
+  var invoiceList = <AdminInvoices>[].obs;
+  var invoiceLoader = false.obs;
+
+  getInvoiceData() async {
+    try {
+      invoiceLoader(true);
+      update();
+
+      var profData = await ApiManger.getAdminInvoice();
+      if (profData != null) {
+        invoiceList.value = profData.data?.invoices as dynamic;
+        print(
+            "This is invoice ${profData.data?.invoices}");
+      } else {
+        invoiceLoader(false);
+        update();
+      }
+    } catch (e) {
+      invoiceLoader(false);
+      update();
+      debugPrint(e.toString());
+    } finally {
+      invoiceLoader(false);
+      update();
+    }
+    update();
+  }
+
+
+
+  var isDetailInvoiceLoading = false.obs;
+  AdminInvoicesDetialAll ?  detailInvoice ;
+
+  getInvoiceDetailData(id) async {
+    try {
+      isDetailInvoiceLoading(true);
+      update();
+
+      var profData = await ApiManger.invoiceAdminDetail(id:id.toString() );
+      if (profData != null) {
+        detailInvoice = profData.data?.invoices ;
+
+        print(
+            "This is invoices detail ${profData.data?.invoices}");
+      } else {
+        isDetailInvoiceLoading(false);
+        update();
+      }
+    } catch (e) {
+      isDetailInvoiceLoading(false);
+      update();
+      debugPrint(e.toString());
+    } finally {
+      isDetailInvoiceLoading(false);
+      update();
+    }
+    update();
+  }
 }

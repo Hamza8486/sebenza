@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:sebenza/app/admin/admin_home/controller/home_controller.dart';
 import 'package:sebenza/app/user_home/home/controller/user_controller.dart';
 import 'package:sebenza/app/util/theme.dart';
 import 'package:sebenza/app/widgets/app_text.dart';
@@ -9,10 +10,10 @@ import 'package:sebenza/app/widgets/helper_function.dart';
 
 
 
-class InvoiceDetail extends StatelessWidget {
-  InvoiceDetail({Key? key}) : super(key: key);
+class AdminInvoiceDetailView extends StatelessWidget {
+  AdminInvoiceDetailView({Key? key}) : super(key: key);
 
-  final homeController = Get.put(UserController());
+  final homeController = Get.put(HomeController());
 
 
 

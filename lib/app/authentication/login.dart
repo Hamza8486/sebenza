@@ -129,9 +129,11 @@ class LoginView extends StatelessWidget {
                         }
 
                         ),
+                    type=="admin"?SizedBox.shrink():
                     SizedBox(
                       height: Get.height * 0.03,
                     ),
+                    type=="admin"?SizedBox.shrink():
                     Center(
                       child: GestureDetector(
                         onTap: () {

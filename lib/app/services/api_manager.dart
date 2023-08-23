@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sebenza/app/admin/admin_home/controller/home_controller.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/admin_invoice_model.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/invoice_detail.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/admin_orders/model/order_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/annoucement/model/updates_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/promo_codes/model/promo_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/roles/model/roles_model.dart';
@@ -89,6 +92,8 @@ class ApiManger extends GetConnect {
             "phone", response.data['data']["user"]['phone'].toString());
         HelperFunctions.saveInPreference(
             "id", response.data['data']["user"]['id'].toString());
+        HelperFunctions.saveInPreference(
+            "type", "admin");
 
         Get.offAll(() => HomeView(), transition: Transition.cupertinoDialog);
         Get.put(AuthController()).updateLoginLoader(false);
@@ -142,6 +147,8 @@ class ApiManger extends GetConnect {
             "phone", response.data['data']["user"]['phone'].toString());
         HelperFunctions.saveInPreference(
             "id", response.data['data']["user"]['id'].toString());
+        HelperFunctions.saveInPreference(
+            "type", "user");
 
         Get.offAll(() => UserHome(), transition: Transition.cupertinoDialog);
         Get.put(AuthController()).updateLoginLoader(false);
@@ -1144,6 +1151,67 @@ registerResponse({required BuildContext context}) async {
 
 
 
+  deleteOrders({id}) async {
+    try {
+      var response = await dio.Dio().delete(
+          "${AppConstants.baseURL}${AppConstants.deleteOrder}${id.toString()}",
+          options: dio.Options(headers: {HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+
+          })
+      );
+      debugPrint(response.toString());
+      debugPrint(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        flutterToast(msg: "Order Deleted");
+        Get.back();
+        Get.put(HomeController()).clear();
+        Get.put(HomeController()).getOrderData();
+        debugPrint(response.data.toString());
+        debugPrint(response.data.toString());
+      }
+    } on dio.DioError catch (e) {
+      Get.back();
+
+      flutterToast(msg: e.response?.data["message"].toString());
+      debugPrint("e.response");
+      debugPrint(e.response.toString());
+    }
+  }
+
+
+
+
+  deleteInvoice({id}) async {
+    try {
+      var response = await dio.Dio().delete(
+          "${AppConstants.baseURL}${AppConstants.delInvoice}${id.toString()}",
+          options: dio.Options(headers: {HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+
+          })
+      );
+      debugPrint(response.toString());
+      debugPrint(response.statusCode.toString());
+      if (response.statusCode == 200) {
+        flutterToast(msg: "Invoice Deleted");
+        Get.back();
+        Get.put(HomeController()).clear();
+        Get.put(HomeController()).getInvoiceData();
+        debugPrint(response.data.toString());
+        debugPrint(response.data.toString());
+      }
+    } on dio.DioError catch (e) {
+      Get.back();
+
+      flutterToast(msg: e.response?.data["message"].toString());
+      debugPrint("e.response");
+      debugPrint(e.response.toString());
+    }
+  }
+
+
+
   deleteType({id}) async {
     try {
       var response = await dio.Dio().delete(
@@ -1638,6 +1706,29 @@ registerResponse({required BuildContext context}) async {
 
 
 
+  static Future<InvoiceAdminModel?> getAdminInvoice() async {
+    var response = await client.get(uriPath(nameUrl: AppConstants.adminInvoiceAll),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+        });
+    debugPrint("response.statusCode");
+    debugPrint(response.statusCode.toString());
+    debugPrint(response.body);
+
+    if (response.statusCode == 200) {
+      var jsonString = jsonDecode(response.body);
+      return InvoiceAdminModel.fromJson(jsonString);
+    } else {
+      debugPrint(response.statusCode.toString());
+
+      //show error message
+      return null;
+    }
+  }
+
+
+
   static Future<InvoiceDetailModel?> getDetailInvoice({id}) async {
     var response = await client.get(uriPath(nameUrl: "${AppConstants.detailInvoice}${id.toString()}/edit"),
         headers: {
@@ -1651,6 +1742,30 @@ registerResponse({required BuildContext context}) async {
     if (response.statusCode == 200) {
       var jsonString = jsonDecode(response.body);
       return InvoiceDetailModel.fromJson(jsonString);
+    } else {
+      debugPrint(response.statusCode.toString());
+
+      //show error message
+      return null;
+    }
+  }
+
+
+
+
+  static Future<InvoiceAdminDetailModel?> invoiceAdminDetail({id}) async {
+    var response = await client.get(uriPath(nameUrl: "${AppConstants.detailAdminInvoice}${id.toString()}/edit"),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+        });
+    debugPrint("response.statusCode");
+    debugPrint(response.statusCode.toString());
+    debugPrint(response.body);
+
+    if (response.statusCode == 200) {
+      var jsonString = jsonDecode(response.body);
+      return InvoiceAdminDetailModel.fromJson(jsonString);
     } else {
       debugPrint(response.statusCode.toString());
 
@@ -2364,6 +2479,29 @@ registerResponse({required BuildContext context}) async {
 
 
 
+  static Future<AdminOrders?> getAdminOrders() async {
+    var response = await client.get(uriPath(nameUrl: AppConstants.adminOrders),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+        });
+    debugPrint("response.statusCode");
+    debugPrint(response.statusCode.toString());
+    debugPrint(response.body);
+
+    if (response.statusCode == 200) {
+      var jsonString = jsonDecode(response.body);
+      return AdminOrders.fromJson(jsonString);
+    } else {
+      debugPrint(response.statusCode.toString());
+
+      //show error message
+      return null;
+    }
+  }
+
+
+
   updatePackages({required BuildContext context,id}) async {
     try {
       dio.FormData data = dio.FormData.fromMap({
@@ -2394,6 +2532,113 @@ registerResponse({required BuildContext context}) async {
 
 
           flutterToastSuccess(msg: "Updated Successfully");
+        }
+
+
+
+        debugPrint(response.data.toString());
+        debugPrint(response.data.toString());
+      }
+      else if(response.statusCode == 201){
+        Get.back();
+
+        flutterToast(msg: response.data["message"].toString());
+      }
+    } on dio.DioError catch (e) {
+      Get.back();
+
+      flutterToast(msg: e.response?.data["message"].toString());
+      debugPrint("e.response");
+      debugPrint(e.response.toString());
+    }
+  }
+
+
+
+
+  updateAdminPackages({required BuildContext context,id}) async {
+    try {
+      dio.FormData data = dio.FormData.fromMap({
+        'new_user': Get.put(HomeController()).users.text,
+
+      });
+      print("Data::::: ${data.fields}");
+      print("Data::::: ${data.fields}");
+      var response = await dio.Dio().post(
+          "${AppConstants.baseURL}${AppConstants.adminUpdateOrders}${id.toString()}",
+          data: data,
+          options: dio.Options(headers: {HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+
+          })
+      );
+
+      if (response.statusCode == 200) {
+        if(response.data["message"]=="Please paid your previous invoice.Then try to update"){
+          Get.back();
+          Get.put(HomeController()).clear();
+          flutterToastSuccess(msg: response.data["message"].toString());
+        }
+        else{
+          Get.put(HomeController()).getOrderData();
+          Get.back();
+          Get.put(HomeController()).clear();
+
+
+          flutterToastSuccess(msg: "Updated Successfully");
+        }
+
+
+
+        debugPrint(response.data.toString());
+        debugPrint(response.data.toString());
+      }
+      else if(response.statusCode == 201){
+        Get.back();
+
+        flutterToast(msg: response.data["message"].toString());
+      }
+    } on dio.DioError catch (e) {
+      Get.back();
+
+      flutterToast(msg: e.response?.data["message"].toString());
+      debugPrint("e.response");
+      debugPrint(e.response.toString());
+    }
+  }
+
+
+
+
+  updateAdminInvoice({required BuildContext context,id}) async {
+    try {
+      dio.FormData data = dio.FormData.fromMap({
+        'discount': Get.put(HomeController()).users.text,
+
+      });
+      print("Data::::: ${data.fields}");
+      print("Data::::: ${data.fields}");
+      var response = await dio.Dio().post(
+          "${AppConstants.baseURL}${AppConstants.adminUpdateInvoice}${id.toString()}",
+          data: data,
+          options: dio.Options(headers: {HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+
+          })
+      );
+
+      if (response.statusCode == 200) {
+        if(response.data["message"]=="Please paid your previous invoice.Then try to update"){
+          Get.back();
+          Get.put(HomeController()).clear();
+          flutterToastSuccess(msg: response.data["message"].toString());
+        }
+        else{
+          Get.put(HomeController()).getInvoiceData();
+          Get.back();
+          Get.put(HomeController()).clear();
+          flutterToastSuccess(msg: response.data["message"].toString());
+
         }
 
 

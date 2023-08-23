@@ -9,7 +9,7 @@ import 'package:sebenza/app/util/theme.dart';
 import 'package:sebenza/app/widgets/app_button.dart';
 import 'package:sebenza/app/widgets/app_text.dart';
 
-Widget WidgetDashboard({image,text,Widget ?icon}){
+Widget WidgetDashboard({image,text,Widget ?icon,double?height}){
   return Container(
     decoration: BoxDecoration(
       color: AppColor.primaryColor,
@@ -31,7 +31,7 @@ Widget WidgetDashboard({image,text,Widget ?icon}){
           SvgPicture.asset(image,height: Get.height*0.048,),
           SizedBox(height: Get.height*0.013,),
           AppText(title: text,
-            size: AppSizes.size_14,
+            size:height?? AppSizes.size_14,
             fontFamily: AppFont.medium,
             color:AppColor.white.withOpacity(0.8),
           ),
@@ -222,6 +222,78 @@ Future<bool> typeAlert({TextEditingController?controller,TextEditingController?c
 
                         buttonRadius: BorderRadius.circular(10),
                         buttonName: "Save", buttonColor: AppColor.btnColor, textColor: AppColor.whiteColor, onTap: onTap),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+
+      ));
+  return clean;
+}
+
+Future<bool> addOrdersAdminDialg({TextEditingController?controller,hint="",hint1="",onTap,String? text}) async {
+  HapticFeedback.lightImpact();
+  bool clean = false;
+  await Get.generalDialog(
+
+      pageBuilder: (context, __, ___) => AlertDialog(
+
+        content: SizedBox(
+          height: Get.height*0.23,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                title: text??"PACKAGE UPGRADE",
+                size: AppSizes.size_16,
+                fontWeight: FontWeight.w600,
+                fontFamily: AppFont.medium,
+                color: AppColor.black.withOpacity(0.8),
+              ),
+              SizedBox(
+                height: Get.height * 0.02,
+              ),
+              textAuth(text: hint1,
+                  textColor:Colors.black
+              ),
+              SizedBox(
+                height: Get.height * 0.01,
+              ),
+              sabenzaField(
+
+                hint:hint,
+                textInputAction: TextInputAction.done,
+                textInputType: TextInputType.phone,
+                hintColor: AppColor.primaryColor.withOpacity(0.8),
+                textColor: AppColor.primaryColor.withOpacity(0.8),
+                controller: controller,
+              ),
+              SizedBox(height: Get.height*0.025,),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                        buttonWidth: Get.width,
+                        buttonHeight: Get.height*0.055,
+
+
+                        buttonRadius: BorderRadius.circular(10),
+
+                        buttonName: "Cancel", buttonColor: AppColor.greyColor, textColor: AppColor.white, onTap: (){
+                      Get.back();
+
+                    }),
+                  ),
+                  SizedBox(width: Get.width*0.03,),
+                  Expanded(
+                    child: AppButton(
+                        buttonWidth: Get.width,
+                        buttonHeight: Get.height*0.055,
+
+                        buttonRadius: BorderRadius.circular(10),
+                        buttonName: "Update", buttonColor: AppColor.btnColor, textColor: AppColor.whiteColor, onTap: onTap),
                   ),
                 ],
               )

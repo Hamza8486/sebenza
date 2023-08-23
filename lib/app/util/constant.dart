@@ -41,6 +41,13 @@ class AppConstants {
   static const String updateTickets = 'admin/supportticket/update/';
   static const String getPromo = 'admin/promocodes';
   static const String addPromo = 'admin/promocodes';
+  static const String adminOrders = 'admin/orders';
+  static const String adminUpdateOrders = 'admin/order/update/';
+  static const String adminUpdateInvoice = 'admin/invoice/update/';
+  static const String deleteOrder = 'admin/orders/';
+  static const String delInvoice = 'admin/invoices/';
+  static const String adminInvoiceAll = 'admin/invoices';
+  static const String detailAdminInvoice = 'admin/invoices/';
 
   ///User SIDE
 

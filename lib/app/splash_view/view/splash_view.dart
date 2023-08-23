@@ -23,7 +23,7 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    HelperFunctions.getFromPreference("id").then((value) {
+    HelperFunctions.getFromPreference("type").then((value) {
       setState(() {
         id = value;
       });
@@ -34,12 +34,18 @@ class _SplashViewState extends State<SplashView> {
 
   void moveToNext() {
     Timer(const Duration(seconds: 3), () {
-      if (id != "") {
+      if (id == "user") {
         Get.offAll(()=>UserHome(),
         transition: Transition.cupertinoDialog
         );
 
-      } else {
+      }
+      else if(id == "admin"){
+        Get.offAll(()=>HomeView(),
+            transition: Transition.cupertinoDialog
+        );
+      }
+      else {
         Get.offAll(()=>AccountType(),
         transition: Transition.cupertinoDialog
         );

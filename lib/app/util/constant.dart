@@ -13,6 +13,7 @@ class AppConstants {
   static const String addUpdates = 'admin/newsupdates';
   static const String UpdatesPromo = 'admin/promocode/update/';
   static const String UpdatesAnnouc = 'admin/newsupdate/update/';
+  static const String adminProfile = 'admin/view-profile';
   static const String updateAccount = 'admin/accounttype/update';
   static const String updateWhatsapp = 'admin/whatsapp/update/';
   static const String updateUserRole = 'admin/userrole/update/';
@@ -31,6 +32,7 @@ class AppConstants {
   static const String getUpdates = 'admin/newsupdates';
   static const String getBasic = 'admin/basicinfos';
   static const String updateBasic = 'admin/basicinfo/update';
+  static const String updateProfile = 'admin/update-profile';
   static const String updateMeta = 'admin/seo/meta';
   static const String updateFace = 'admin/pixel/analytics';
   static const String socialLinks = 'admin/social/links';
@@ -51,6 +53,8 @@ class AppConstants {
 
   ///User SIDE
 
+  static const String userProfile = 'user/view-profile';
+  static const String userUpdateProfile = 'user/update-profile';
   static const String getUpdatesUser = 'newsupdates';
   static const String getMeeting = 'user/metings';
   static const String getExpense = 'user/expenses';

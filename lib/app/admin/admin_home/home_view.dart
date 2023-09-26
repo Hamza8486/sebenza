@@ -1,11 +1,14 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:sebenza/app/admin/admin_home/component/home_component.dart';
 import 'package:sebenza/app/admin/admin_home/controller/home_controller.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/view/admin_invoice_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_orders/view/orders_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/annoucement/view/announce_view.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/profile/profile_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/promo_codes/view/promo_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/roles/view/roles_view.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/setting/view/basic_view.dart';
@@ -64,7 +67,46 @@ class _HomeViewState extends State<HomeView> {
 
                     children: [
 
+                      GestureDetector(
+                        onTap:(){
+                          homeController.getAdminProfile();
+                          Get.to(ProfileView(),
+                          transition: Transition.rightToLeft
+                          );
+                        },
+                        child: Container(
+                          height: Get.size.height * 0.065,
+                          width: Get.size.height * 0.065,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(1000),
+                              border: Border.all(
+                                  color: AppColor.whiteColor, width: 1.5)),
+                          child: Obx(
+                                  () {
+                                return ClipRRect(
+                                    borderRadius: BorderRadius.circular(1000),
+                                    child: CachedNetworkImage(
+                                      imageUrl: homeController.image.value,
+                                      fit:
+                                      homeController.image.value.isEmpty?BoxFit.cover:
 
+                                      BoxFit.cover,
+                                      placeholder: (context, url) =>  Center(
+                                        child: SpinKitThreeBounce(
+                                            size: 18, color: AppColor.btnColor),
+                                      ),
+                                      errorWidget: (context, url, error) => ClipRRect(
+                                        borderRadius: BorderRadius.circular(1000),
+                                        child: Image.asset(
+                                          "assets/images/person.png",
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ));
+                              }
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         width: Get.width * 0.03,
                       ),
@@ -83,18 +125,25 @@ class _HomeViewState extends State<HomeView> {
                           ),
                            Obx(
                              () {
-                               return AppText(
-                                      title:
+                               return
+                                 homeController.profileLoading.value?
+                                 Center(
+                                     child:
+                                     SpinKitThreeBounce(size: 10, color: AppColor.white))
+                                     :
 
-                                      "${homeController.name.value.toString()} ${homeController.nameLast.value.toString()}",
-                                      size: AppSizes.size_15,
-                                      overFlow: TextOverflow.ellipsis,
-                                      maxLines:
-                                      homeController.name.value.isNotEmpty?1:
-                                      1,
-                                      fontFamily: AppFont.medium,
-                                 color: AppColor.whiteColor.withOpacity(0.8),
-                                    );
+                                 AppText(
+                                   title:
+
+                                   "${(homeController.adminProfileData?.user?.firstName).toString()} ${homeController.adminProfileData?.user?.lastName.toString()}",
+                                   size: AppSizes.size_15,
+                                   overFlow: TextOverflow.ellipsis,
+                                   maxLines:
+                                   homeController.name.value.isNotEmpty?1:
+                                   1,
+                                   fontFamily: AppFont.medium,
+                                   color: AppColor.whiteColor.withOpacity(0.8),
+                                 );
                              }
                            ),
                         ],

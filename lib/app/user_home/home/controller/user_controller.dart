@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sebenza/app/services/api_manager.dart';
+import 'package:sebenza/app/user_home/home/user_tabs/calendar/model/calendar_model.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/invoice/model/invoice_detail.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/invoice/model/invoice_model.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/orders/model/order_model.dart';
+import 'package:sebenza/app/user_home/home/user_tabs/profile/model/user_model.dart';
 import 'package:sebenza/app/widgets/helper_function.dart';
 
 import '../user_tabs/ticket_systtem/model/ticket_user_model.dart';
@@ -159,6 +161,7 @@ class UserController extends GetxController {
       token.value = value;
 
       print(token.value.toString());
+      getProfile();
       getTaskData();
       getMeetingData();
       getCalendarData();
@@ -204,7 +207,11 @@ class UserController extends GetxController {
     update();
   }
 
-
+  var loaderBasicUser = false.obs;
+  updateBasicLoader(val){
+    loaderBasicUser.value = val;
+    update();
+  }
 
   var allTask = [].obs;
 
@@ -525,6 +532,42 @@ class UserController extends GetxController {
       debugPrint(e.toString());
     } finally {
       isDetailInvoiceLoading(false);
+      update();
+    }
+    update();
+  }
+
+  var image="".obs;
+  updateImage(val) {
+    image.value = val;
+    update();
+  }
+
+  var profileLoading = false.obs;
+  UserProfileData ?  userProfileData ;
+
+  getProfile() async {
+    try {
+      profileLoading(true);
+      update();
+
+      var profData = await ApiManger.userProfileModel();
+      if (profData != null) {
+        userProfileData = profData.data;
+        updateImage(profData.data?.user?.profile==null?"":profData.data?.user?.profile.toString());
+
+        print(
+            "This is profile data ${profData.data}");
+      } else {
+        profileLoading(false);
+        update();
+      }
+    } catch (e) {
+      profileLoading(false);
+      update();
+      debugPrint(e.toString());
+    } finally {
+      profileLoading(false);
       update();
     }
     update();

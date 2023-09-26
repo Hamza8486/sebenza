@@ -11,6 +11,7 @@ import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/admin
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/invoice_detail.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_orders/model/order_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/annoucement/model/updates_model.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/profile/model/profile_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/promo_codes/model/promo_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/roles/model/roles_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/setting/model/basic_model.dart';
@@ -35,6 +36,7 @@ import 'package:sebenza/app/user_home/home/user_tabs/invoice/model/invoice_model
 import 'package:sebenza/app/user_home/home/user_tabs/meeting/model/model.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/my_task/model/task_model.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/orders/model/order_model.dart';
+import 'package:sebenza/app/user_home/home/user_tabs/profile/model/user_model.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/ticket_systtem/model/reply_model.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/ticket_systtem/model/ticket_user_model.dart';
 import 'package:sebenza/app/util/constant.dart';
@@ -1090,6 +1092,51 @@ registerResponse({required BuildContext context}) async {
     }
   }
 
+
+  static Future<GetProfileModel?> getProfileModel() async {
+    var response = await client.get(uriPath(nameUrl: AppConstants.adminProfile),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+        });
+    debugPrint("response.statusCode");
+    debugPrint(response.statusCode.toString());
+    debugPrint(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var jsonString = jsonDecode(response.body);
+      return GetProfileModel.fromJson(jsonString);
+    } else {
+      debugPrint(response.statusCode.toString());
+
+      //show error message
+      return null;
+    }
+  }
+
+
+
+  static Future<UserProfileModel?> userProfileModel() async {
+    var response = await client.get(uriPath(nameUrl: AppConstants.userProfile),
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: "Bearer ${Get.put(UserController()).token.value}"
+        });
+    debugPrint("response.statusCode");
+    debugPrint(response.statusCode.toString());
+    debugPrint(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      var jsonString = jsonDecode(response.body);
+      return UserProfileModel.fromJson(jsonString);
+    } else {
+      debugPrint(response.statusCode.toString());
+
+      //show error message
+      return null;
+    }
+  }
+
   deleteResponse({id}) async {
     try {
       var response = await dio.Dio().delete(
@@ -1326,6 +1373,141 @@ registerResponse({required BuildContext context}) async {
       flutterToast(msg: e.response?.data["message"].toString());
       debugPrint("e.response");
       debugPrint(e.response.toString());
+    }
+  }
+
+
+
+  editProfile({context,name,last,File?file,phone}) async {
+    try {
+      late dio.MultipartFile x, lisenceFile;
+
+      try {
+        dio.FormData data = dio.FormData.fromMap({
+          'firstName': name.toString(),
+          'lastName': last.toString(),
+          'mobile':phone.toString(),
+
+
+          file == null ? "" : 'img':
+          file == null
+              ? ""
+              : await dio.MultipartFile.fromFile(
+              file.path),
+        });
+        print("Data::::: ${data.fields}");
+        print("Data::::: ${data.fields}");
+        var response = await dio.Dio().post(
+            "${AppConstants.baseURL}${AppConstants.updateProfile}",
+            data: data,
+            options: dio.Options(headers: {
+              HttpHeaders.contentTypeHeader: "application/json",
+              HttpHeaders.authorizationHeader: "Bearer ${Get.put(HomeController()).token.value}"
+
+            })
+        );
+        if (response.statusCode == 201) {
+
+          Get.put(HomeController()).getAdminProfile();
+          Get.back();
+          Get.put(HomeController()).updateBasicLoader(false);
+          // Get.put(HomeController()).clear();
+
+
+
+          flutterToastSuccess(msg: "Profile Update Successfully");
+
+        }
+        else if(response.statusCode == 200){
+          Get.put(HomeController()).updateBasicLoader(false);
+          Get.put(HomeController()).getAdminProfile();
+
+          flutterToast(msg: response.data["message"].toString());
+        }
+      } on dio.DioError catch (e) {
+        Get.put(HomeController()).updateBasicLoader(false);
+
+        flutterToast(msg: e.response?.data["message"].toString());
+        // log("e.response");
+
+
+      }
+    } on dio.DioError catch (e) {
+      Get.put(HomeController()).updateBasicLoader(false);
+      flutterToast(msg: e.response?.data["message"].toString());
+      log(e.toString());
+    }
+  }
+
+
+
+
+  editUserProfile({context,name,last,File?file,phone,
+  post,count,city,address,state
+  }) async {
+    try {
+      late dio.MultipartFile x, lisenceFile;
+
+      try {
+        dio.FormData data = dio.FormData.fromMap({
+          'firstName': name.toString(),
+          'lastName': last.toString(),
+          'mobile':phone.toString(),
+          'postcode':post.toString(),
+          'address':address.toString(),
+          'state':state.toString(),
+          'country':count.toString(),
+          'city':city.toString(),
+
+
+
+          file == null ? "" : 'img':
+          file == null
+              ? ""
+              : await dio.MultipartFile.fromFile(
+              file.path),
+        });
+        print("Data::::: ${data.fields}");
+        print("Data::::: ${data.fields}");
+        var response = await dio.Dio().post(
+            "${AppConstants.baseURL}${AppConstants.userUpdateProfile}",
+            data: data,
+            options: dio.Options(headers: {
+              HttpHeaders.contentTypeHeader: "application/json",
+              HttpHeaders.authorizationHeader: "Bearer ${Get.put(UserController()).token.value}"
+
+            })
+        );
+        if (response.statusCode == 201) {
+
+          Get.put(UserController()).getProfile();
+          Get.back();
+          Get.put(UserController()).updateBasicLoader(false);
+          // Get.put(HomeController()).clear();
+
+
+
+          flutterToastSuccess(msg: "Profile Update Successfully");
+
+        }
+        else if(response.statusCode == 200){
+          Get.put(UserController()).updateBasicLoader(false);
+          Get.put(UserController()).getProfile();
+
+          flutterToast(msg: response.data["message"].toString());
+        }
+      } on dio.DioError catch (e) {
+        Get.put(UserController()).updateBasicLoader(false);
+
+        flutterToast(msg: e.response?.data["message"].toString());
+        // log("e.response");
+
+
+      }
+    } on dio.DioError catch (e) {
+      Get.put(UserController()).updateBasicLoader(false);
+      flutterToast(msg: e.response?.data["message"].toString());
+      log(e.toString());
     }
   }
 

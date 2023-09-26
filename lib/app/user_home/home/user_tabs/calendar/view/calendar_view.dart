@@ -23,6 +23,9 @@ class CalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       backgroundColor: AppColor.secColor,
       body: Column(
@@ -117,6 +120,7 @@ class CalendarView extends StatelessWidget {
                                   padding: EdgeInsets.zero,
                                   itemCount:homeController.calendarList.length,
                                   itemBuilder: (BuildContext context, int index) {
+
                                     return Card(
                                       margin: EdgeInsets.symmetric(
                                           vertical: Get.height * 0.012),
@@ -239,7 +243,7 @@ class CalendarView extends StatelessWidget {
                                                   child: Padding(
                                                     padding: const EdgeInsets.symmetric(horizontal: 14,vertical: 5.5),
                                                     child: AppText(
-                                                      title: homeController.calendarList[index].status,
+                                                      title: homeController.calendarList[index].status.toString(),
                                                       size: AppSizes.size_14,
                                                       fontWeight: FontWeight.w400,
                                                       fontFamily: AppFont.regular,
@@ -251,41 +255,45 @@ class CalendarView extends StatelessWidget {
 
                                                 GestureDetector(
                                                   onTap: ()async{
+                                                    print(homeController.calendarList[index].startDate.toString());
+                                                    print(homeController.calendarList[index].endDate.toString());
                                                     DateTime? pickedDate = await showDatePicker(
-                                                        context: context,
-                                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
-
-                                                        builder: (BuildContext? context,
-                                                            Widget? child) {
-                                                          return Center(
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(20)),
-                                                                width: 350.0,
-                                                                height: 500.0,
-                                                                child: Theme(
-                                                                  data: ThemeData.light().copyWith(
-                                                                    primaryColor:
-                                                                    AppColor.blackColor,
-
-                                                                    colorScheme: ColorScheme.light(
-                                                                      primary:
-                                                                      AppColor.blackColor,),
-                                                                    buttonTheme: ButtonThemeData(
-                                                                        buttonColor:
-                                                                        AppColor.primaryColor),
-                                                                  ),
-                                                                  child: child!,
+                                                      context: context,
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      builder: (BuildContext? context, Widget? child) {
+                                                        return Center(
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(20),
+                                                            ),
+                                                            width: 350.0,
+                                                            height: 500.0,
+                                                            child: Theme(
+                                                              data: ThemeData.light().copyWith(
+                                                                primaryColor: AppColor.blackColor,
+                                                                colorScheme: ColorScheme.light(
+                                                                  primary: AppColor.blackColor,
                                                                 ),
-                                                              ));
-                                                        },
-                                                        initialDate: DateTime.now(),
-                                                        firstDate: DateTime.now(),
-                                                        lastDate: DateTime(2050));
+                                                                buttonTheme: ButtonThemeData(
+                                                                  buttonColor: AppColor.primaryColor,
+                                                                ),
+                                                              ),
+                                                              child: child!,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      initialDate: DateTime.parse(homeController.calendarList[index].startDate),
+                                                      firstDate: DateTime.parse(homeController.calendarList[index].startDate.toString()),
+                                                      lastDate: DateTime.parse(homeController.calendarList[index].endDate.toString()),
+                                                      selectableDayPredicate: (DateTime date) {
+                                                        return date.isAfter(DateTime.parse(homeController.calendarList[index].startDate.toString()).subtract(Duration(days: 1))) &&
+                                                            date.isBefore(DateTime.parse(homeController.calendarList[index].endDate.toString()).add(Duration(days: 1)));
+                                                      },
+                                                    );
 
                                                     if (pickedDate != null) {
-
+                                                      // Handle the pickedDate
                                                     }
                                                   },
                                                   child: Container(

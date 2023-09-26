@@ -1,5 +1,7 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:sebenza/app/authentication/account_type.dart';
 import 'package:sebenza/app/user_home/home/component/user_component.dart';
@@ -11,6 +13,7 @@ import 'package:sebenza/app/user_home/home/user_tabs/invoice/view/invoice_view.d
 import 'package:sebenza/app/user_home/home/user_tabs/meeting/view/meeting_view.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/my_task/my_task.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/orders/view/orders_view.dart';
+import 'package:sebenza/app/user_home/home/user_tabs/profile/view/user_profile_view.dart';
 import 'package:sebenza/app/user_home/home/user_tabs/ticket_systtem/view/user_tickets.dart';
 import 'package:sebenza/app/util/theme.dart';
 import 'package:sebenza/app/widgets/app_text.dart';
@@ -63,6 +66,46 @@ class _UserHomeState extends State<UserHome> {
                     children: [
 
 
+                      GestureDetector(
+                        onTap:(){
+                          homeController.getProfile();
+                          Get.to(UserProfileView(),
+                              transition: Transition.rightToLeft
+                          );
+                        },
+                        child: Container(
+                          height: Get.size.height * 0.065,
+                          width: Get.size.height * 0.065,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(1000),
+                              border: Border.all(
+                                  color: AppColor.whiteColor, width: 1.5)),
+                          child: Obx(
+                                  () {
+                                return ClipRRect(
+                                    borderRadius: BorderRadius.circular(1000),
+                                    child: CachedNetworkImage(
+                                      imageUrl: homeController.image.value,
+                                      fit:
+                                      homeController.image.value.isEmpty?BoxFit.cover:
+
+                                      BoxFit.cover,
+                                      placeholder: (context, url) =>  Center(
+                                        child: SpinKitThreeBounce(
+                                            size: 18, color: AppColor.btnColor),
+                                      ),
+                                      errorWidget: (context, url, error) => ClipRRect(
+                                        borderRadius: BorderRadius.circular(1000),
+                                        child: Image.asset(
+                                          "assets/images/person.png",
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ));
+                              }
+                          ),
+                        ),
+                      ),
                       SizedBox(
                         width: Get.width * 0.03,
                       ),
@@ -81,10 +124,17 @@ class _UserHomeState extends State<UserHome> {
                           ),
                           Obx(
                                   () {
-                                return AppText(
+                                return
+                                  homeController.profileLoading.value?
+                                  Center(
+                                      child:
+                                      SpinKitThreeBounce(size: 10, color: AppColor.white))
+                                      :
+
+                                  AppText(
                                   title:
 
-                                  "${homeController.name.value.toString()} ${homeController.nameLast.value.toString()}",
+                                  "${(homeController.userProfileData?.user?.firstName).toString()} ${homeController.userProfileData?.user?.lastName.toString()}",
                                   size: AppSizes.size_15,
                                   overFlow: TextOverflow.ellipsis,
                                   maxLines:

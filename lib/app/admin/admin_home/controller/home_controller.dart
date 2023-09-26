@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/admin_invoice_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_invoice/model/invoice_detail.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/admin_orders/model/order_model.dart';
+import 'package:sebenza/app/admin/admin_home/home_tabs/profile/model/profile_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/tickets/model/all_tickets_model.dart';
 import 'package:sebenza/app/admin/admin_home/home_tabs/user/model/roles_model.dart';
 import 'package:sebenza/app/services/api_manager.dart';
@@ -30,6 +31,11 @@ class HomeController extends GetxController {
     update();
   }
   var roleTypeName="".obs;
+  var image="".obs;
+  updateImage(val) {
+    image.value = val;
+    update();
+  }
   updateRoleName(val){
     roleTypeName.value=val;
     update();
@@ -77,6 +83,8 @@ class HomeController extends GetxController {
     loaderTypeUser.value = val;
     update();
   }
+
+
   updateBasicLoader(val){
     loaderBasicUser.value = val;
     update();
@@ -330,6 +338,7 @@ class HomeController extends GetxController {
       getUpdatesData();
       getOrderData();
       getInvoiceData();
+      getAdminProfile();
      // getTicketsData();
       getBasicData();
       print(token.value.toString());
@@ -718,6 +727,40 @@ class HomeController extends GetxController {
       debugPrint(e.toString());
     } finally {
       isDetailInvoiceLoading(false);
+      update();
+    }
+    update();
+  }
+
+
+
+
+
+  var profileLoading = false.obs;
+  AdminProfileData ?  adminProfileData ;
+
+  getAdminProfile() async {
+    try {
+      profileLoading(true);
+      update();
+
+      var profData = await ApiManger.getProfileModel();
+      if (profData != null) {
+        adminProfileData = profData.data;
+        updateImage(profData.data?.user?.profile==null?"":profData.data?.user?.profile.toString());
+
+        print(
+            "This is profile data ${profData.data}");
+      } else {
+        profileLoading(false);
+        update();
+      }
+    } catch (e) {
+      profileLoading(false);
+      update();
+      debugPrint(e.toString());
+    } finally {
+      profileLoading(false);
       update();
     }
     update();

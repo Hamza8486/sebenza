@@ -170,6 +170,7 @@ class RolesView extends StatelessWidget {
                             ListView.builder(
                               shrinkWrap: true,
                               primary: false,
+                              reverse: true,
                               physics: const BouncingScrollPhysics(),
                               padding: EdgeInsets.zero,
                               itemCount: homeController.userRolList.length,
